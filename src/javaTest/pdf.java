@@ -19,41 +19,63 @@ public class pdf {
         List<File> pdfFiles = new ArrayList<>();
 
         // Create 100 PDF documents
-        for (int i = 1; i <= 50; i++) {
+        for (int i = 1; i <= 25; i++) {
             String fileName = "document" + i + ".pdf";
-            String text = "This is the text for document " + i;
+            String text = "This " + i;
+            File file = createPDF(fileName, text);
+            pdfFiles.add(file);
+            
+        }
+        for (int i = 26; i <= 50; i++) {
+            String fileName = "document" + i + ".pdf";
+            String text = "This is the text  " +i;
             File file = createPDF(fileName, text);
             pdfFiles.add(file);
         }
-        for (int i = 51; i <= 100; i++) {
+        for (int i = 51; i <= 75; i++) {
             String fileName = "document" + i + ".pdf";
-            String text = "Hello " + i;
+            String text = "Hello ";
+            File file = createPDF(fileName, text);
+            pdfFiles.add(file);
+        }
+        for (int i = 76; i <= 100; i++) {
+            String fileName = "document" + i + ".pdf";
+            String text = "document ";
             File file = createPDF(fileName, text);
             pdfFiles.add(file);
         }
 
-        // Search for documents that match the keyword "Hello"
-        String keyword = "Hello";
-        List<File> matchingFiles = searchForKeyword(pdfFiles, keyword);
+        // Search for documents that match the keywords "Hello", "This", and "document"
+        List<String> keywords = new ArrayList<>();
+        keywords.add("Hello");
+        keywords.add("This");
+        keywords.add("document");
 
-        // Create a folder to store the matching documents
-        File folder = new File("matching_documents");
-        folder.mkdir();
+        for (String keyword : keywords) {
+            List<File> matchingFiles = searchForKeyword(pdfFiles, keyword);
 
-        // Move the matching documents to the folder
-        for (File file : matchingFiles) {
-            try {
-                file.renameTo(new File(folder, file.getName()));
-            } catch (Exception e) {
-                e.printStackTrace();
+            // Create the "matching_documents_<keyword>" folder if it does not exist
+            File folder = new File("matching_documents_" + keyword);
+            if (!folder.exists()) {
+                folder.mkdir();
+            }
+
+            // Move the matching documents to the folder
+            for (File file : matchingFiles) {
+                try {
+                    file.renameTo(new File(folder, file.getName()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
-        System.out.println("Pdf file is Created!!!");
+
+        System.out.println("PDF files created and moved to matching folders!");
     }
 
     public static File createPDF(String fileName, String text) {
         // Create a new PDF document
-        Document document = new Document();
+    	Document document = new Document();
 
         try {
             // Create a PDF writer for the document
@@ -63,9 +85,11 @@ public class pdf {
             document.open();
 
             // Add the text to the document
-            document.add(new Paragraph(text));document.close();
-        } 
-        catch (DocumentException | IOException e) {
+            document.add(new Paragraph(text));
+
+            // Close the document
+            document.close();
+        } catch (DocumentException | IOException e) {
             e.printStackTrace();
         }
 
@@ -98,8 +122,9 @@ public class pdf {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return text.toString();
     }
-    }
+}
 
 
